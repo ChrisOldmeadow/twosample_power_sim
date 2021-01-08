@@ -34,9 +34,21 @@ pow_sup_bin(1000,150,ctrlrate = 0.2, trmtrate = 0.25 )
 # exact
 
 pow_sup_bin_exact <- function(numsims, nperarm, ctrlrate, trmtrate ){
-    res <- sapply(1:1000, function(i) {fisher.test(x = factor(rbinom( nperarm, 1, ctrlrate)), y = factor(rbinom(nperarm, 1, trmtrate)))$p.value})
+    res <- pbapply::pbsapply(1:1000, function(i) {fisher.test(x = c(factor(rbinom( nperarm, 1, ctrlrate)), factor(rbinom(nperarm, 1, trmtrate))), y = c(rep(0, nperarm),rep(1,nperarm)))$p.value})
     return(mean(res < .05))
 }
 
-
 pow_sup_bin_exact(1000,150,ctrlrate = 0.2, trmtrate = 0.25 )
+
+
+# validation
+Exact::power.exact.test(p1=0.2,p2=0.25,n1=150,n2=150,simulation=TRUE)
+Exact::power.exact.test(p1=0.2,p2=0.25,n1=150,n2=150,simulation=FALSE)
+Exact::power.exact.test(p1=0.2,p2=0.25,n1=150,n2=150, method = "Fisher")
+
+
+
+
+
+
+
